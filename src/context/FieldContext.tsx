@@ -1,6 +1,6 @@
+import type { FieldType } from "@/features/pdf/types";
 import { createContext, useCallback, useContext, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
 
-export type FieldType = "text" | "number" | "checkbox";
 
 export interface FormField {
     id: string;

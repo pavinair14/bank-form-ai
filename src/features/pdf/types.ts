@@ -1,4 +1,4 @@
-export type FieldType = "text" | "number" | "checkbox";
+export type FieldType = "text" | "number" | "checkbox" | "date";
 
 export interface PdfField {
     id: string;

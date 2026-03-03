@@ -20,7 +20,7 @@ const PdfViewer = () => {
     };
 
     return (
-        <div style={{ position: "relative", height: "100%", overflow: "auto" }}>
+        <div className="relative lg:h-[90vh]">
             <Document file={pdfForm}>
                 <Page pageNumber={1} scale={scale} onLoadSuccess={onPageLoad} />
             </Document>
@@ -53,14 +53,14 @@ const PdfViewer = () => {
                                 width: box.width,
                                 height: box.height,
                                 border: isFocused
-                                    ? "2px solid red"
+                                    ? "2px solid green"
                                     : "1px solid rgba(0,0,255,0.4)",
                                 background: isFocused
-                                    ? "rgba(255,0,0,0.2)"
+                                    ? "rgba(0,128,0,0.2)"
                                     : "rgba(0,0,255,0.1)",
                                 borderRadius: "2px",
                                 boxShadow: isFocused
-                                    ? "0 0 15px rgba(255, 0, 0, 0.4)"
+                                    ? "0 0 15px rgba(0, 128, 0, 0.8)"
                                     : "none",
                             }}
                         />

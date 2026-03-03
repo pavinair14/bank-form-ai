@@ -13,13 +13,13 @@ export const highlightVariants = {
 };
 
 export const pulseVariants = {
-    initial: { opacity: 0.2, boxShadow: "0 0 0px rgba(255, 0, 0, 0)" },
+    initial: { opacity: 0.8, boxShadow: "0 0 0px rgba(0, 128, 0, 0)" },
     animate: {
-        opacity: [0.2, 0.35, 0.2],
+        opacity: [0.8, 0.35, 0.6],
         boxShadow: [
-            "0 0 0px rgba(255, 0, 0, 0.3)",
-            "0 0 20px rgba(255, 0, 0, 0.6)",
-            "0 0 0px rgba(255, 0, 0, 0.3)",
+            "0 0 0px rgba(0, 128, 0, 0.3)",
+            "0 0 20px rgba(0, 128, 0, 0.6)",
+            "0 0 0px rgba(0, 128, 0, 0.3)",
         ],
         transition: {
             duration: 2,

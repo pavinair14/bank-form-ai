@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useFieldContext } from "@/context/FieldContext";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFormSchema } from "@/features/form/schema";
 
@@ -24,18 +24,27 @@ const DynamicForm = () => {
         message: string;
     } | null>(null);
 
+    // hide the success message after a short delay
+    useEffect(() => {
+        if (submitStatus?.type === "success" || isSubmitting) {
+            const timer = setTimeout(() => setSubmitStatus(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [submitStatus, isSubmitting]);
+
     const schema = useMemo(() => createFormSchema(fields), [fields]);
 
     const form = useForm({
         resolver: zodResolver(schema),
         mode: "onChange",
         defaultValues: Object.fromEntries(
-            fields.map((f) => [f.id, f.value])
+            fields.map((f) => [f.id, f.value, f.type])
         ),
     });
 
     const {
         register,
+        control,
         handleSubmit,
         formState: { errors },
     } = form;
@@ -46,10 +55,10 @@ const DynamicForm = () => {
         setSubmitStatus(null);
 
         try {
-            const result = await submitForm(data);
+            await submitForm(data);
             setSubmitStatus({
                 type: "success",
-                message: `Form submitted successfully (ID: ${result.id})`,
+                message: `Form submitted successfully`,
             });
         } catch (err) {
             setSubmitStatus({
@@ -64,7 +73,7 @@ const DynamicForm = () => {
 
 
     return (
-        <Card className="p-6 m-6 h-[90vh] overflow-auto space-y-6">
+        <Card className="p-6 m-6 h-[90vh] overflow-auto space-y-6 w-full">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}
@@ -78,33 +87,51 @@ const DynamicForm = () => {
                             variants={itemVariants}
                             className="space-y-2"
                         >
-                            <Label htmlFor={field.id}>{field.label}</Label>
+                            {field.type !== "checkbox" && (
+                                <Label htmlFor={field.id} className="text-base">{field.label}</Label>
+                            )}
 
                             {field.type === "checkbox" ? (
-                                <div className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id={field.id}
-                                        {...register(field.id)}
-                                        onFocus={() =>
-                                            dispatch({
-                                                type: "SET_FOCUS",
-                                                payload: field.id,
-                                            })
-                                        }
-                                        onBlur={() =>
-                                            dispatch({
-                                                type: "SET_FOCUS",
-                                                payload: null,
-                                            })
-                                        }
-                                    />
-                                </div>
+                                <Controller
+                                    name={field.id}
+                                    control={control}
+                                    render={({ field: { value, onChange } }) => (
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id={field.id}
+                                                checked={Boolean(value)}
+                                                onCheckedChange={(checked) => {
+                                                    onChange(checked);
+                                                }}
+                                                onFocus={() =>
+                                                    dispatch({
+                                                        type: "SET_FOCUS",
+                                                        payload: field.id,
+                                                    })
+                                                }
+                                                onBlur={() =>
+                                                    dispatch({
+                                                        type: "SET_FOCUS",
+                                                        payload: null,
+                                                    })
+                                                }
+                                            />
+                                            <Label htmlFor={field.id} className="cursor-pointer text-base">
+                                                {field.label}
+                                            </Label>
+                                        </div>
+                                    )}
+                                />
                             ) : (
                                 <>
                                     <Input
                                         id={field.id}
-                                        type={field.type}
-                                        placeholder={field.label}
+                                        type="text"
+                                        placeholder={
+                                            field.type === "date"
+                                                ? "DD/MM/YYYY"
+                                                : field.label
+                                        }
                                         {...register(field.id)}
                                         onFocus={() =>
                                             dispatch({
@@ -118,13 +145,12 @@ const DynamicForm = () => {
                                                 payload: null,
                                             })
                                         }
-                                        className={
-                                            errors[field.id] ? "border-red-500" : ""
-                                        }
+                                        className={`text-base ${errors[field.id] ? "border-red-500" : ""
+                                            }`}
                                     />
 
                                     {errors[field.id] && (
-                                        <p className="text-sm text-red-500">
+                                        <p className="text-base text-red-500">
                                             {errors[field.id]?.message as string}
                                         </p>
                                     )}
@@ -138,7 +164,7 @@ const DynamicForm = () => {
                 <motion.div variants={itemVariants}>
                     <Button
                         type="submit"
-                        className="w-full"
+                        className="w-full text-base"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? "Submitting..." : "Submit"}
