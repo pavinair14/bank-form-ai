@@ -79,13 +79,13 @@ const DynamicForm = () => {
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="space-y-6"
+                    className="grid grid-cols-2 gap-6"
                 >
                     {fields.map((field) => (
                         <motion.div
                             key={field.id}
                             variants={itemVariants}
-                            className="space-y-2"
+                            className={`space-y-2 ${field.type === "checkbox" ? "col-span-2" : ""}`}
                         >
                             {field.type !== "checkbox" && (
                                 <Label htmlFor={field.id} className="text-base">{field.label}</Label>
