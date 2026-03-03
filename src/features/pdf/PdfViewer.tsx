@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useFieldContext } from "@/context/FieldContext";
 import { motion } from "framer-motion";
 import pdfForm from "@/assets/sample-form.pdf"
 import { toPixels, pulseVariants, highlightVariants } from "./animation";
+import type { PDFPageProxy } from "./types";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
@@ -14,10 +15,18 @@ const PdfViewer = () => {
     const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
     const scale = 1;
 
-    const onPageLoad = (page: any) => {
+    // Memoize onPageLoad callback
+    const onPageLoad = useCallback((page: PDFPageProxy) => {
         const viewport = page.getViewport({ scale });
         setPageSize({ width: viewport.width, height: viewport.height });
-    };
+    }, [scale]);
+
+    // Memoize pixel calculations for all fields
+    const pixelizedFields = useMemo(() =>
+        fields.map((field) => ({
+            ...field,
+            box: toPixels(field.boundingBox, pageSize),
+        })), [fields, pageSize]);
 
     return (
         <div className="relative lg:h-[90vh]">
@@ -35,9 +44,25 @@ const PdfViewer = () => {
                     pointerEvents: "none",
                 }}
             >
-                {fields.map((field) => {
-                    const box = toPixels(field.boundingBox, pageSize);
+                {pixelizedFields.map((field) => {
                     const isFocused = field.id === focusedFieldId;
+                    const boxStyle = {
+                        position: "absolute" as const,
+                        left: field.box.left,
+                        top: field.box.top,
+                        width: field.box.width,
+                        height: field.box.height,
+                        border: isFocused
+                            ? "2px solid green"
+                            : "1px solid rgba(0,0,255,0.4)",
+                        background: isFocused
+                            ? "rgba(0,128,0,0.2)"
+                            : "rgba(0,0,255,0.1)",
+                        borderRadius: "2px",
+                        boxShadow: isFocused
+                            ? "0 0 15px rgba(0, 128, 0, 0.8)"
+                            : "none",
+                    } as const;
 
                     return (
                         <motion.div
@@ -46,23 +71,7 @@ const PdfViewer = () => {
                             animate={isFocused ? "animate" : "initial"}
                             exit="exit"
                             variants={isFocused ? pulseVariants : highlightVariants}
-                            style={{
-                                position: "absolute",
-                                left: box.left,
-                                top: box.top,
-                                width: box.width,
-                                height: box.height,
-                                border: isFocused
-                                    ? "2px solid green"
-                                    : "1px solid rgba(0,0,255,0.4)",
-                                background: isFocused
-                                    ? "rgba(0,128,0,0.2)"
-                                    : "rgba(0,0,255,0.1)",
-                                borderRadius: "2px",
-                                boxShadow: isFocused
-                                    ? "0 0 15px rgba(0, 128, 0, 0.8)"
-                                    : "none",
-                            }}
+                            style={boxStyle}
                         />
                     );
                 })}

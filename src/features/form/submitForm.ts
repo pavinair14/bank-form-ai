@@ -3,7 +3,7 @@ export interface SubmitResponse {
 }
 
 export async function submitForm(
-    data: Record<string, any>
+    data: Record<string, string | number | boolean>
 ): Promise<SubmitResponse> {
     const response = await fetch(
         "https://jsonplaceholder.typicode.com/posts",

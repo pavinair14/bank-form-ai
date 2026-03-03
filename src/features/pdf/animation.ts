@@ -1,5 +1,6 @@
+import type { BoundingBox, PageSize, PixelBox } from "./types";
 
-export const toPixels = (box: any, pageSize: any) => ({
+export const toPixels = (box: BoundingBox, pageSize: PageSize): PixelBox => ({
     left: box.x * pageSize.width,
     top: box.y * pageSize.height,
     width: box.width * pageSize.width,

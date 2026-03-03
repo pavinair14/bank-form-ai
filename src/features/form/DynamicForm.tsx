@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useFieldContext } from "@/context/FieldContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,12 +34,18 @@ const DynamicForm = () => {
 
     const schema = useMemo(() => createFormSchema(fields), [fields]);
 
+    // Memoize default values
+    const defaultValues = useMemo(
+        () => Object.fromEntries(
+            fields.map((f) => [f.id, f.value])
+        ),
+        [fields]
+    );
+
     const form = useForm({
         resolver: zodResolver(schema),
         mode: "onChange",
-        defaultValues: Object.fromEntries(
-            fields.map((f) => [f.id, f.value, f.type])
-        ),
+        defaultValues,
     });
 
     const {
@@ -49,8 +55,8 @@ const DynamicForm = () => {
         formState: { errors },
     } = form;
 
-    // Form submission
-    const onSubmit = async (data: Record<string, any>) => {
+    // Memoize form submission handler
+    const memoizedOnSubmit = useCallback(async (data: Record<string, any>) => {
         setIsSubmitting(true);
         setSubmitStatus(null);
 
@@ -69,17 +75,17 @@ const DynamicForm = () => {
         } finally {
             setIsSubmitting(false);
         }
-    };
+    }, []);
 
 
     return (
         <Card className="p-6 m-6 h-[90vh] overflow-auto space-y-6 w-full">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(memoizedOnSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-2 gap-6"
+                    className="lg:grid lg:grid-cols-2 lg:gap-6 xs:space-y-6 space-y-1"
                 >
                     {fields.map((field) => (
                         <motion.div

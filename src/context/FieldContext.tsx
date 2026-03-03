@@ -1,4 +1,4 @@
-import type { FieldType } from "@/features/pdf/types";
+import type { FieldType, FieldValue } from "@/features/pdf/types";
 import { createContext, useCallback, useContext, useMemo, useReducer, type Dispatch, type ReactNode } from "react";
 
 
@@ -27,7 +27,7 @@ interface State {
 
 type Action =
     | { type: "SET_FIELDS"; payload: FormField[] }
-    | { type: "UPDATE_FIELD"; payload: { id: string; value: any } }
+    | { type: "UPDATE_FIELD"; payload: { id: string; value: FieldValue } }
     | { type: "SET_FOCUS"; payload: string | null };
 
 // Default/initial state used by the reducer
@@ -73,7 +73,7 @@ interface FieldContextValue {
     state: State;
     dispatch: Dispatch<Action>;
     setFields: (fields: FormField[]) => void;
-    updateField: (id: string, value: any) => void;
+    updateField: (id: string, value: FieldValue) => void;
     setFocus: (id: string | null) => void;
 }
 
@@ -90,7 +90,7 @@ export const FieldProvider = ({ children }: { children: ReactNode }) => {
     );
 
     const updateField = useCallback(
-        (id: string, value: any) => {
+        (id: string, value: FieldValue) => {
             dispatch({ type: "UPDATE_FIELD", payload: { id, value } });
         },
         [dispatch]
