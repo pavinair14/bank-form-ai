@@ -19,7 +19,7 @@ export const mockFormData: FormField[] = [
         id: "customer_name",
         label: "First Name",
         type: "text",
-        value: "Rahul Sharma",
+        value: "RJKultheep",
         boundingBox: { x: 0.12135634, y: 0.28541404, width: 0.50, height: 0.02 },
     },
     {
