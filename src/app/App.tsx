@@ -34,7 +34,7 @@ const App = () => {
           </div>
         )}
 
-        <Suspense fallback={<div className="p-6">Loading form data...</div>}>
+        <Suspense fallback={<div className="flex-1 flex justify-center items-center min-h-[80vh] bg-gray-100 animate-pulse">Loading form data...</div>}>
           <DynamicForm />
         </Suspense>
       </aside>
