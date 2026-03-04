@@ -79,10 +79,13 @@ const DynamicForm = () => {
 
 
     return (
-        <Card className="p-6 m-6 h-[90vh] overflow-auto space-y-6 w-full">
+        <Card className="p-6 h-[90vh] overflow-auto space-y-6 w-full">
             <form onSubmit={handleSubmit(memoizedOnSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
                     className="lg:grid lg:grid-cols-2 lg:gap-6 xs:space-y-6 space-y-1"
                 >
                     {fields.map((field) => (
@@ -168,7 +171,7 @@ const DynamicForm = () => {
                 {fields.length > 0 && <motion.div variants={itemVariants}>
                     <Button
                         type="submit"
-                        className="w-full text-base"
+                        className="w-full bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? "Submitting..." : "Submit"}
