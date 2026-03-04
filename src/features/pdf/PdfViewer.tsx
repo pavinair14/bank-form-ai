@@ -31,7 +31,7 @@ const PdfViewer = () => {
     return (
         <div
             ref={containerRef}
-            className="relative w-full max-w-full overflow-auto"
+            className="relative w-full max-w-full"
             style={{ minHeight: "60vh", maxHeight: "90vh" }}
         >
             <Document file={pdfForm} className="w-full h-full">
