@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import "@/lib/pdfWorker";
 import { Document, Page } from "react-pdf";
 import { useFieldContext } from "@/context/FieldContext";
 import { motion } from "framer-motion";
