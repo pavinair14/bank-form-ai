@@ -35,7 +35,6 @@ export function createFormSchema(fields: FormField[]) {
 
             case "number": {
                 const numericRule = NUMERIC_RULES[field.id];
-
                 if (numericRule) {
                     schemaShape[field.id] = REQUIRED(field.label).regex(
                         numericRule.regex,
@@ -57,7 +56,9 @@ export function createFormSchema(fields: FormField[]) {
                 break;
 
             default: {
-                if (OPTIONAL_TEXT.includes(field.id)) {
+                if (field.id === "email") {
+                    schemaShape[field.id] = REQUIRED(field.label).email(`${field.label} must be a valid email address`);
+                } else if (OPTIONAL_TEXT.includes(field.id)) {
                     schemaShape[field.id] = z.string().optional().or(z.literal(""));
                 } else {
                     schemaShape[field.id] = REQUIRED(field.label);
