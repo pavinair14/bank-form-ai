@@ -1,73 +1,165 @@
-# React + TypeScript + Vite
+# Bank AI Form
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, interactive bank form application with PDF viewing and dynamic form filling capabilities. Built with React, TypeScript, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## 🔗 Preview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Run locally (see setup below) and open the printed localhost URL from Vite (typically http://localhost:5173 or a nearby port).
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework/Build:** Vite + React 19 + TypeScript
+- **Forms:** react-hook-form
+- **State Management:** Context API
+- **Validation:** Zod
+- **Styling:** Tailwind CSS + Shadcn UI
+- **Animations:** Framer Motion
+- **Icons:** lucide-react
+- **PDF rendering:** react-pdf
+- **AI Suggestion:** Document AI (mock data)
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+✨ **Dynamic Form Generation**
+- Auto-generates form fields from PDF data
+- Real-time validation with Zod
+- Responsive grid layout (1 column on mobile, 2 columns on desktop)
+- Support for text, number, checkbox, and date fields
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+📄 **Interactive PDF Viewer**
+- Side-by-side PDF and form display
+- Interactive field highlighting with green focus indicators
+- Smooth animations and visual feedback
+- Synchronized field focus between PDF and form
+- **Automatic scroll-to-field highlight on large screens**
+- **Highlight overlays use only Tailwind CSS classes (no style tags)**
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+🎯 **Form Validation**
+- Client-side validation with Zod schemas
+- Custom validation rules for numeric fields
+- Date format validation (DD/MM/YYYY)
+- Real-time error messages
+- Optional field support
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+✅ **User Experience**
+- Smooth animations with Framer Motion
+- Auto-hide success messages after 3 seconds
+- Disabled submit button during form submission
+- Clean, modern UI with shadcn/ui components
+- Accessible form controls with proper labels
+
+
+## Project Structure
+
+```bash
+src/
+  main.tsx
+  app/
+      App.tsx
+      Layout.tsx
+  assets/
+    sample-form.pdf
+  components/
+    ui/
+      button.tsx
+      card.tsx
+      input.tsx
+      label.tsx
+      checkbox.
+  context/
+    FieldContext.tsx
+    FieldProvider.tsx
+    types.ts
+    useFieldContext.ts
+  features/
+    document-ai/
+      aiServices.ts
+      data.ts
+      useLoadFormData.ts
+    form/
+      animations.ts
+      DynamicForm.tsx
+      schema.ts
+      submitForm.ts
+    modals/
+      animations.ts
+      PdfViewer.tsx
+      types.ts
+    lib/
+      utils.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Prerequisites
+- Node.js 18+ 
+- pnpm (or npm/yarn)
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd bank-ai-form
 ```
+
+2. Install dependencies:
+```bash
+pnpm install
+```
+
+3. Start the development server:
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build
+- `pnpm lint` - Run ESLint
+
+## Form Fields
+
+### Validation Rules
+
+### Numeric Fields
+- **account_number**: Exactly 9 digits (e.g., `321502150`)
+- **mobile_number**: Exactly 10 digits (e.g., `6378951260`)
+- **primary_acc_id**: Exactly 10 digits (e.g., `4458312548`)
+
+### Date Fields
+- Format: `DD/MM/YYYY` (e.g., `06/03/1976`)
+
+### Optional Fields
+- `last_name`
+- `post_office`
+
+All other fields are required.
+
+## Performance Optimizations
+
+✅ Memoized form submission handler with `useCallback`
+✅ Memoized default values computation with `useMemo`
+✅ Memoized PDF page load callback with `useCallback`
+✅ Pre-calculated pixel field coordinates with `useMemo`
+✅ Pre-computed style objects to avoid recreation
+✅ React Context memoization to prevent unnecessary re-renders
+
+
+### Responsive Breakpoints
+- **Mobile**: Single column form layout
+- **Large screens (lg)**: Two-column form layout
+
+## 🤝 Contributing
+
+PRs and issues are welcome. Please include tests when changing behavior.
+
+
+## 📄 License
+
+MIT

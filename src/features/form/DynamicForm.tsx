@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useFieldContext } from "@/context/FieldContext";
+import { useFieldContext } from "@/context/useFieldContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createFormSchema } from "@/features/form/schema";
@@ -67,12 +67,12 @@ const DynamicForm = () => {
 
     // form submission
     const onSubmit = useCallback(
-        async (data: Record<string, any>) => {
+        async (data: Record<string, unknown>) => {
             setIsSubmitting(true);
             setSubmitStatus(null);
 
             try {
-                await submitForm(data);
+                await submitForm(data as Record<string, string | number | boolean>);
 
                 setSubmitStatus({
                     type: "success",

@@ -1,4 +1,4 @@
-import type { FormField } from "@/context/FieldContext";
+import type { FormField } from "@/context/types";
 import { mockFormData } from "./data";
 
 /**

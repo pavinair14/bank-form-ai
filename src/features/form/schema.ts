@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { FormField } from "@/context/FieldContext";
+import type { FormField } from "@/context/types";
 
 const REQUIRED = (label: string) =>
     z.string().min(1, `${label} is required`);
