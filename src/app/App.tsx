@@ -1,6 +1,5 @@
 
 import { useLoadFormData } from "@/features/document-ai/useLoadFormData";
-import { Card } from "@/components/ui/card";
 import { lazy, Suspense } from "react";
 import Layout from "@/app/Layout";
 
@@ -16,7 +15,7 @@ const App = () => {
         <h2 className="text-2xl font-semibold my-4 text-center lg:text-left">
           Uploaded Document
         </h2>
-        <Suspense fallback={<Card className="p-6">Loading PDF...</Card>}>
+        <Suspense fallback={<div className="p-6">Loading PDF...</div>}>
           <div className="flex-1 flex justify-center items-center">
             <PdfViewer />
           </div>
@@ -31,12 +30,12 @@ const App = () => {
           Extracted Details
         </h2>
         {status === "error" && (
-          <Card className="p-6 text-red-500">
+          <div className="p-6 text-red-500">
             Error: {error}
-          </Card>
+          </div>
         )}
 
-        <Suspense fallback={<Card className="p-6">Loading form data...</Card>}>
+        <Suspense fallback={<div className="p-6">Loading form data...</div>}>
           <DynamicForm />
         </Suspense>
       </aside>
