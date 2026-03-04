@@ -1,4 +1,3 @@
-
 import { useLoadFormData } from "@/features/document-ai/useLoadFormData";
 import { lazy, Suspense } from "react";
 import Layout from "@/app/Layout";
@@ -15,8 +14,8 @@ const App = () => {
         <h2 className="text-2xl font-semibold my-4 text-center lg:text-left">
           Uploaded Document
         </h2>
-        <Suspense fallback={<div className="p-6">Loading PDF...</div>}>
-          <div className="flex-1 flex justify-center items-center">
+        <Suspense fallback={<div className="flex-1 flex justify-center items-center min-h-[80vh] bg-gray-100 animate-pulse">Loading PDF...</div>}>
+          <div className="flex-1 flex justify-center items-center min-h-[80vh]">
             <PdfViewer />
           </div>
         </Suspense>

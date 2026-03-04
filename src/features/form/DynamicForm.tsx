@@ -95,7 +95,7 @@ const DynamicForm = () => {
 
 
     return (
-        <Card className="p-6 h-full overflow-auto space-y-6 w-full">
+        <Card className="p-6 h-full min-h-[80vh] overflow-auto space-y-6 w-full">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}

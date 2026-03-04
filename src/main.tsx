@@ -1,8 +1,6 @@
 import "@/App.css";
 import React from 'react';
 import ReactDOM from "react-dom/client";
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import App from '@/app/App.tsx'
 import { FieldProvider } from '@/context/FieldContext.tsx';
 
