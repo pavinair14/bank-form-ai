@@ -1,25 +1,25 @@
-import { useState, useCallback, useMemo } from "react";
+
+import { useState, useRef, useCallback, useMemo } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useFieldContext } from "@/context/useFieldContext";
-import { motion } from "framer-motion";
-import pdfForm from "@/assets/sample-form.pdf"
-import { toPixels, pulseVariants, highlightVariants } from "./animation";
+import pdfForm from "@/assets/sample-form.pdf";
+import { toPixels } from "./animation";
 import type { PDFPageProxy } from "./types";
+import { useResponsivePdfScale } from "./useResponsivePdfScale";
+import { PdfFieldOverlay } from "./PdfFieldOverlay";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const PdfViewer = () => {
-    const { state } = useFieldContext();
-    const { fields, focusedFieldId } = state;
-
+    const { fields, focusedFieldId } = useFieldContext().state;
+    const containerRef = useRef<HTMLDivElement>(null);
     const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
-    const scale = 1;
+    const scale = useResponsivePdfScale(pageSize, containerRef);
 
-    // Memoize onPageLoad callback
     const onPageLoad = useCallback((page: PDFPageProxy) => {
-        const viewport = page.getViewport({ scale });
+        const viewport = page.getViewport({ scale: 1 });
         setPageSize({ width: viewport.width, height: viewport.height });
-    }, [scale]);
+    }, []);
 
     // Memoize pixel calculations for all fields
     const pixelizedFields = useMemo(() =>
@@ -29,7 +29,7 @@ const PdfViewer = () => {
         })), [fields, pageSize]);
 
     return (
-        <div className="relative w-full h-full">
+        <div ref={containerRef} className="relative w-full max-w-full overflow-hidden" style={{ minHeight: "60vh" }}>
             <Document file={pdfForm} className="w-full h-full">
                 <Page
                     pageNumber={1}
@@ -40,48 +40,17 @@ const PdfViewer = () => {
                     className="w-full h-auto"
                 />
             </Document>
-
             <div
                 style={{
                     position: "absolute",
                     top: 0,
                     left: 0,
-                    width: pageSize.width,
-                    height: pageSize.height,
+                    width: pageSize.width * scale,
+                    height: pageSize.height * scale,
                     pointerEvents: "none",
                 }}
             >
-                {pixelizedFields.map((field) => {
-                    const isFocused = field.id === focusedFieldId;
-                    const boxStyle = {
-                        position: "absolute" as const,
-                        left: field.box.left,
-                        top: field.box.top,
-                        width: field.box.width,
-                        height: field.box.height,
-                        border: isFocused
-                            ? "2px solid green"
-                            : "1px solid rgba(0,0,255,0.4)",
-                        background: isFocused
-                            ? "rgba(0,128,0,0.2)"
-                            : "rgba(0,0,255,0.1)",
-                        borderRadius: "2px",
-                        boxShadow: isFocused
-                            ? "0 0 15px rgba(0, 128, 0, 0.8)"
-                            : "none",
-                    } as const;
-
-                    return (
-                        <motion.div
-                            key={field.id}
-                            initial="initial"
-                            animate={isFocused ? "animate" : "initial"}
-                            exit="exit"
-                            variants={isFocused ? pulseVariants : highlightVariants}
-                            style={boxStyle}
-                        />
-                    );
-                })}
+                <PdfFieldOverlay pixelizedFields={pixelizedFields} focusedFieldId={focusedFieldId} scale={scale} />
             </div>
         </div>
     );
