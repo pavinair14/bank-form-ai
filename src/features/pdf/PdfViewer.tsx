@@ -29,7 +29,11 @@ const PdfViewer = () => {
         })), [fields, pageSize]);
 
     return (
-        <div ref={containerRef} className="relative w-full max-w-full overflow-hidden" style={{ minHeight: "60vh" }}>
+        <div
+            ref={containerRef}
+            className="relative w-full max-w-full overflow-auto"
+            style={{ minHeight: "60vh", maxHeight: "90vh" }}
+        >
             <Document file={pdfForm} className="w-full h-full">
                 <Page
                     pageNumber={1}
