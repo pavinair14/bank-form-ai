@@ -1,12 +1,10 @@
 import { useState, useCallback, useMemo } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page } from "react-pdf";
 import { useFieldContext } from "@/context/FieldContext";
 import { motion } from "framer-motion";
 import pdfForm from "@/assets/sample-form.pdf"
 import { toPixels, pulseVariants, highlightVariants } from "./animation";
 import type { PDFPageProxy } from "./types";
-
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const PdfViewer = () => {
     const { state } = useFieldContext();
@@ -31,7 +29,8 @@ const PdfViewer = () => {
     return (
         <div className="relative lg:h-[90vh]">
             <Document file={pdfForm}>
-                <Page pageNumber={1} scale={scale} onLoadSuccess={onPageLoad} />
+                <Page pageNumber={1} scale={scale} onLoadSuccess={onPageLoad} renderTextLayer={false}
+                    renderAnnotationLayer={false} />
             </Document>
 
             <div
