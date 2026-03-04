@@ -83,7 +83,6 @@ const DynamicForm = () => {
             <form onSubmit={handleSubmit(memoizedOnSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}
-                    animate="visible"
                     className="lg:grid lg:grid-cols-2 lg:gap-6 xs:space-y-6 space-y-1"
                 >
                     {fields.map((field) => (
@@ -166,7 +165,7 @@ const DynamicForm = () => {
                 </motion.div>
 
                 {/* Submit Button */}
-                <motion.div variants={itemVariants}>
+                {fields.length > 0 && <motion.div variants={itemVariants}>
                     <Button
                         type="submit"
                         className="w-full text-base"
@@ -174,7 +173,7 @@ const DynamicForm = () => {
                     >
                         {isSubmitting ? "Submitting..." : "Submit"}
                     </Button>
-                </motion.div>
+                </motion.div>}
 
                 {/* Submit Status */}
                 <AnimatePresence>
