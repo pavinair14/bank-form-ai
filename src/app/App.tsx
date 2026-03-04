@@ -12,24 +12,33 @@ const App = () => {
 
   return (
     <Layout>
-      <section className="flex-1 m-6 min-h-[80vh] lg:border-r">
+      <section className="flex-1 flex flex-col m-4 min-h-0 lg:border-gray-300 overflow-auto">
+        <h2 className="text-2xl font-semibold my-4 text-center lg:text-left">
+          Uploaded Document
+        </h2>
         <Suspense fallback={<Card className="p-6">Loading PDF...</Card>}>
-          <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-semibold my-4">Uploaded Document</h2>
+          <div className="flex-1 flex justify-center items-center">
             <PdfViewer />
           </div>
         </Suspense>
-      </section >
+      </section>
 
-      <aside className="flex-1 m-6 flex flex-col items-center w-full min-h-[80vh]">
-        <h2 className="text-2xl font-semibold my-4">Extracted Details</h2>
+      {/* vertical divider for large screens */}
+      <div className="hidden lg:block w-px bg-gray-300 mx-2" />
+
+      <aside className="flex-1 flex flex-col m-4 min-h-0 overflow-auto">
+        <h2 className="text-2xl font-semibold my-4 text-center lg:text-left">
+          Extracted Details
+        </h2>
         {status === "error" && (
           <Card className="p-6 text-red-500">
             Error: {error}
           </Card>
         )}
 
-        <Suspense fallback={<Card className="p-6">Loading form data...</Card>}><DynamicForm /></Suspense>
+        <Suspense fallback={<Card className="p-6">Loading form data...</Card>}>
+          <DynamicForm />
+        </Suspense>
       </aside>
     </Layout>
   );

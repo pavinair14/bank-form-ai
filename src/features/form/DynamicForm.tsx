@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useFieldContext } from "@/context/FieldContext";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +12,11 @@ import { Button } from "@/components/ui/button";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { submitForm } from "./submitForm";
-import { containerVariants, itemVariants, statusVariants } from "./animations";
+import {
+    containerVariants,
+    itemVariants,
+    statusVariants,
+} from "./animations";
 
 const DynamicForm = () => {
     const { state, dispatch } = useFieldContext();
@@ -24,80 +28,97 @@ const DynamicForm = () => {
         message: string;
     } | null>(null);
 
-    // hide the success message after a short delay
-    useEffect(() => {
-        if (submitStatus?.type === "success" || isSubmitting) {
-            const timer = setTimeout(() => setSubmitStatus(null), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [submitStatus, isSubmitting]);
-
+    // schema
     const schema = useMemo(() => createFormSchema(fields), [fields]);
 
-    // Memoize default values
-    const defaultValues = useMemo(
-        () => Object.fromEntries(
-            fields.map((f) => [f.id, f.value])
-        ),
-        [fields]
-    );
 
     const form = useForm({
         resolver: zodResolver(schema),
         mode: "onChange",
-        defaultValues,
     });
 
     const {
         register,
         control,
         handleSubmit,
+        reset,
         formState: { errors },
     } = form;
 
-    // Memoize form submission handler
-    const memoizedOnSubmit = useCallback(async (data: Record<string, any>) => {
-        setIsSubmitting(true);
-        setSubmitStatus(null);
-
-        try {
-            await submitForm(data);
-            setSubmitStatus({
-                type: "success",
-                message: `Form submitted successfully`,
-            });
-        } catch (err) {
-            setSubmitStatus({
-                type: "error",
-                message:
-                    err instanceof Error ? err.message : "Unknown submission error",
-            });
-        } finally {
-            setIsSubmitting(false);
+    // setting default values
+    useEffect(() => {
+        if (fields.length > 0) {
+            const values = Object.fromEntries(
+                fields.map((f) => [f.id, f.value ?? ""])
+            );
+            reset(values);
         }
-    }, []);
+    }, [fields, reset]);
+
+
+    // hides success message after 3 seconds
+    useEffect(() => {
+        if (submitStatus?.type === "success") {
+            const timer = setTimeout(() => setSubmitStatus(null), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [submitStatus]);
+
+
+    // form submission
+    const onSubmit = useCallback(
+        async (data: Record<string, any>) => {
+            setIsSubmitting(true);
+            setSubmitStatus(null);
+
+            try {
+                await submitForm(data);
+
+                setSubmitStatus({
+                    type: "success",
+                    message: "Form submitted successfully",
+                });
+            } catch (err) {
+                setSubmitStatus({
+                    type: "error",
+                    message:
+                        err instanceof Error
+                            ? err.message
+                            : "Unknown submission error",
+                });
+            } finally {
+                setIsSubmitting(false);
+            }
+        },
+        []
+    );
 
 
     return (
-        <Card className="p-6 h-[90vh] overflow-auto space-y-6 w-full">
-            <form onSubmit={handleSubmit(memoizedOnSubmit)} className="space-y-6">
+        <Card className="p-6 h-full overflow-auto space-y-6 w-full">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="lg:grid lg:grid-cols-2 lg:gap-6 xs:space-y-6 space-y-1"
+                    transition={{ duration: 0.6 }}
+                    className="lg:grid lg:grid-cols-2 lg:gap-6 space-y-4 lg:space-y-0"
                 >
                     {fields.map((field) => (
                         <motion.div
                             key={field.id}
                             variants={itemVariants}
-                            className={`space-y-2 ${field.type === "checkbox" ? "col-span-2" : ""}`}
+                            className={`space-y-2 ${field.type === "checkbox" ? "col-span-2" : ""
+                                }`}
                         >
+                            {/* Label */}
                             {field.type !== "checkbox" && (
-                                <Label htmlFor={field.id} className="text-base">{field.label}</Label>
+                                <Label htmlFor={field.id} className="text-base">
+                                    {field.label}
+                                </Label>
                             )}
 
+                            {/* Checkbox */}
                             {field.type === "checkbox" ? (
                                 <Controller
                                     name={field.id}
@@ -107,9 +128,7 @@ const DynamicForm = () => {
                                             <Checkbox
                                                 id={field.id}
                                                 checked={Boolean(value)}
-                                                onCheckedChange={(checked) => {
-                                                    onChange(checked);
-                                                }}
+                                                onCheckedChange={(checked) => onChange(checked)}
                                                 onFocus={() =>
                                                     dispatch({
                                                         type: "SET_FOCUS",
@@ -123,7 +142,10 @@ const DynamicForm = () => {
                                                     })
                                                 }
                                             />
-                                            <Label htmlFor={field.id} className="cursor-pointer text-base">
+                                            <Label
+                                                htmlFor={field.id}
+                                                className="cursor-pointer text-base"
+                                            >
                                                 {field.label}
                                             </Label>
                                         </div>
@@ -133,7 +155,7 @@ const DynamicForm = () => {
                                 <>
                                     <Input
                                         id={field.id}
-                                        type="text"
+                                        type={field.type === "number" ? "number" : "text"}
                                         placeholder={
                                             field.type === "date"
                                                 ? "DD/MM/YYYY"
@@ -157,7 +179,7 @@ const DynamicForm = () => {
                                     />
 
                                     {errors[field.id] && (
-                                        <p className="text-base text-red-500">
+                                        <p className="text-sm text-red-500">
                                             {errors[field.id]?.message as string}
                                         </p>
                                     )}
@@ -168,15 +190,17 @@ const DynamicForm = () => {
                 </motion.div>
 
                 {/* Submit Button */}
-                {fields.length > 0 && <motion.div variants={itemVariants}>
-                    <Button
-                        type="submit"
-                        className="w-full bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "Submitting..." : "Submit"}
-                    </Button>
-                </motion.div>}
+                {fields.length > 0 && (
+                    <motion.div variants={itemVariants}>
+                        <Button
+                            type="submit"
+                            className="w-full bg-black text-white py-3 rounded-xl"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Submitting..." : "Submit"}
+                        </Button>
+                    </motion.div>
+                )}
 
                 {/* Submit Status */}
                 <AnimatePresence>
@@ -201,6 +225,6 @@ const DynamicForm = () => {
             </form>
         </Card>
     );
-}
+};
 
 export default DynamicForm;

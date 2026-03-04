@@ -29,10 +29,16 @@ const PdfViewer = () => {
         })), [fields, pageSize]);
 
     return (
-        <div className="relative lg:h-[90vh]">
-            <Document file={pdfForm}>
-                <Page pageNumber={1} scale={scale} onLoadSuccess={onPageLoad} renderTextLayer={false}
-                    renderAnnotationLayer={false} />
+        <div className="relative w-full h-full">
+            <Document file={pdfForm} className="w-full h-full">
+                <Page
+                    pageNumber={1}
+                    scale={scale}
+                    onLoadSuccess={onPageLoad}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                    className="w-full h-auto"
+                />
             </Document>
 
             <div
