@@ -83,7 +83,6 @@ const DynamicForm = () => {
             <form onSubmit={handleSubmit(memoizedOnSubmit)} className="space-y-6">
                 <motion.div
                     variants={containerVariants}
-                    initial="hidden"
                     animate="visible"
                     className="lg:grid lg:grid-cols-2 lg:gap-6 xs:space-y-6 space-y-1"
                 >
