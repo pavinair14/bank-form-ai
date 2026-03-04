@@ -1,10 +1,12 @@
 import { useState, useCallback, useMemo } from "react";
-import { Document, Page } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 import { useFieldContext } from "@/context/FieldContext";
 import { motion } from "framer-motion";
 import pdfForm from "@/assets/sample-form.pdf"
 import { toPixels, pulseVariants, highlightVariants } from "./animation";
 import type { PDFPageProxy } from "./types";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 const PdfViewer = () => {
     const { state } = useFieldContext();
