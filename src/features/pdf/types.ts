@@ -30,6 +30,16 @@ export interface PdfField {
     boundingBox: BoundingBox;
 }
 
+export interface PdfFieldOverlayProps {
+    pixelizedFields: Array<{
+        id: string;
+        box: PixelBox;
+        score?: number
+    }>;
+    focusedFieldId?: string | null;
+    scale: number;
+}
+
 /**
  * PDF.js Page object type
  * Represents a single page from a PDF document

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
-export function useResponsivePdfScale(
+export const useResponsivePdfScale = (
     pageSize: { width: number; height: number },
     containerRef: React.RefObject<HTMLDivElement | null>
-) {
+) => {
     const [scale, setScale] = useState(1);
 
     useEffect(() => {

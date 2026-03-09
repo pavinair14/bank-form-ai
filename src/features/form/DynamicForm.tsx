@@ -20,7 +20,7 @@ import {
 
 const DynamicForm = () => {
     const { state, dispatch } = useFieldContext();
-    const { fields } = state;
+    const { fields, pdfStatus } = state;
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<{
@@ -47,7 +47,7 @@ const DynamicForm = () => {
 
     // setting default values
     useEffect(() => {
-        if (fields.length > 0) {
+        if (pdfStatus === "success" && fields.length > 0) {
             const values = Object.fromEntries(
                 fields.map((f) => [f.id, f.value ?? ""])
             );
@@ -96,39 +96,74 @@ const DynamicForm = () => {
 
     return (
         <Card className="p-6 h-full min-h-[80vh] overflow-auto space-y-6 w-full">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <motion.div
-                    variants={containerVariants}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="lg:grid lg:grid-cols-2 lg:gap-6 space-y-4 lg:space-y-0"
-                >
-                    {fields.map((field) => (
-                        <motion.div
-                            key={field.id}
-                            variants={itemVariants}
-                            className={`space-y-2 ${field.type === "checkbox" ? "col-span-2" : ""
-                                }`}
-                        >
-                            {/* Label */}
-                            {field.type !== "checkbox" && (
-                                <Label htmlFor={field.id} className="text-base">
-                                    {field.label}
-                                </Label>
-                            )}
+            {pdfStatus === "success" ?
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <motion.div
+                        variants={containerVariants}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="lg:grid lg:grid-cols-2 lg:gap-6 space-y-4 lg:space-y-0"
+                    >
+                        {fields.map((field) => (
+                            <motion.div
+                                key={field.id}
+                                variants={itemVariants}
+                                className={`space-y-2 ${field.type === "checkbox" ? "col-span-2" : ""
+                                    }`}
+                            >
+                                {/* Label */}
+                                {field.type !== "checkbox" && (
+                                    <Label htmlFor={field.id} className="text-base">
+                                        {field.label}
+                                    </Label>
+                                )}
 
-                            {/* Checkbox */}
-                            {field.type === "checkbox" ? (
-                                <Controller
-                                    name={field.id}
-                                    control={control}
-                                    render={({ field: { value, onChange } }) => (
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox
+                                {/* Checkbox */}
+                                {field.type === "checkbox" ? (
+                                    <Controller
+                                        name={field.id}
+                                        control={control}
+                                        render={({ field: { value, onChange } }) => (
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id={field.id}
+                                                    checked={Boolean(value)}
+                                                    onCheckedChange={(checked) => onChange(checked)}
+                                                    onFocus={() =>
+                                                        dispatch({
+                                                            type: "SET_FOCUS",
+                                                            payload: field.id,
+                                                        })
+                                                    }
+                                                    onBlur={() =>
+                                                        dispatch({
+                                                            type: "SET_FOCUS",
+                                                            payload: null,
+                                                        })
+                                                    }
+                                                />
+                                                <Label
+                                                    htmlFor={field.id}
+                                                    className="cursor-pointer text-base"
+                                                >
+                                                    {field.label}
+                                                </Label>
+                                            </div>
+                                        )}
+                                    />
+                                ) : (
+                                    <>
+                                        <div className="flex">
+                                            <Input
                                                 id={field.id}
-                                                checked={Boolean(value)}
-                                                onCheckedChange={(checked) => onChange(checked)}
+                                                type={field.type === "number" ? "number" : "text"}
+                                                placeholder={
+                                                    field.type === "date"
+                                                        ? "DD/MM/YYYY"
+                                                        : field.label
+                                                }
+                                                {...register(field.id)}
                                                 onFocus={() =>
                                                     dispatch({
                                                         type: "SET_FOCUS",
@@ -141,88 +176,58 @@ const DynamicForm = () => {
                                                         payload: null,
                                                     })
                                                 }
+                                                readOnly={((field?.score ?? 0) >= 0.9) && field.readOnly}
+                                                className={`text-base ${errors[field.id] ? "border-red-500" : ""
+                                                    }`}
                                             />
-                                            <Label
-                                                htmlFor={field.id}
-                                                className="cursor-pointer text-base"
-                                            >
-                                                {field.label}
-                                            </Label>
                                         </div>
-                                    )}
-                                />
-                            ) : (
-                                <>
-                                    <Input
-                                        id={field.id}
-                                        type={field.type === "number" ? "number" : "text"}
-                                        placeholder={
-                                            field.type === "date"
-                                                ? "DD/MM/YYYY"
-                                                : field.label
-                                        }
-                                        {...register(field.id)}
-                                        onFocus={() =>
-                                            dispatch({
-                                                type: "SET_FOCUS",
-                                                payload: field.id,
-                                            })
-                                        }
-                                        onBlur={() =>
-                                            dispatch({
-                                                type: "SET_FOCUS",
-                                                payload: null,
-                                            })
-                                        }
-                                        className={`text-base ${errors[field.id] ? "border-red-500" : ""
-                                            }`}
-                                    />
-
-                                    {errors[field.id] && (
-                                        <p className="text-sm text-red-500">
-                                            {errors[field.id]?.message as string}
-                                        </p>
-                                    )}
-                                </>
-                            )}
-                        </motion.div>
-                    ))}
-                </motion.div>
-
-                {/* Submit Button */}
-                {fields.length > 0 && (
-                    <motion.div variants={itemVariants}>
-                        <Button
-                            type="submit"
-                            className="w-full bg-black text-white py-3 rounded-xl"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "Submitting..." : "Submit"}
-                        </Button>
+                                        {errors[field.id] && (
+                                            <p className="text-sm text-red-500">
+                                                {errors[field.id]?.message as string}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            </motion.div>
+                        ))}
                     </motion.div>
-                )}
 
-                {/* Submit Status */}
-                <AnimatePresence>
-                    {submitStatus && (
-                        <motion.div
-                            variants={statusVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            transition={{ duration: 0.25 }}
-                            className={`p-4 rounded-lg ${submitStatus.type === "success"
-                                ? "bg-green-50 text-green-800 border border-green-200"
-                                : "bg-red-50 text-red-800 border border-red-200"
-                                }`}
-                        >
-                            <p className="text-sm font-medium">
-                                {submitStatus.message}
-                            </p>
+                    {/* Submit Button */}
+                    {fields.length > 0 && (
+                        <motion.div variants={itemVariants}>
+                            <Button
+                                type="submit"
+                                className="w-full bg-black text-white py-3 rounded-xl"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? "Submitting..." : "Submit"}
+                            </Button>
                         </motion.div>
                     )}
-                </AnimatePresence>
-            </form>
+
+                    {/* Submit Status */}
+                    <AnimatePresence>
+                        {submitStatus && (
+                            <motion.div
+                                variants={statusVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                transition={{ duration: 0.25 }}
+                                className={`p-4 rounded-lg ${submitStatus.type === "success"
+                                    ? "bg-green-50 text-green-800 border border-green-200"
+                                    : "bg-red-50 text-red-800 border border-red-200"
+                                    }`}
+                            >
+                                <p className="text-sm font-medium">
+                                    {submitStatus.message}
+                                </p>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </form> : <p className="text-gray-700 text-sm">
+                    Form will appear once the document loads.
+                </p>}
         </Card>
     );
 };

@@ -6,6 +6,7 @@ import type { State, Action, FieldContextValue } from "./types";
 export const initialState: State = {
     fields: [],
     focusedFieldId: null,
+    pdfStatus: "loading"
 };
 
 /**
@@ -21,20 +22,15 @@ export function reducer(state: State, action: Action): State {
             // replace the entire fields array
             return { ...state, fields: action.payload };
 
-        case "UPDATE_FIELD":
-            // update value of single field by id
-            return {
-                ...state,
-                fields: state.fields.map((field) =>
-                    field.id === action.payload.id
-                        ? { ...field, value: action.payload.value }
-                        : field
-                ),
-            };
-
         case "SET_FOCUS":
             // set or clear the currently focused field
             return { ...state, focusedFieldId: action.payload };
+
+        case "PDF_STATUS":
+            return {
+                ...state,
+                pdfStatus: action.payload
+            };
 
         default:
             return state;

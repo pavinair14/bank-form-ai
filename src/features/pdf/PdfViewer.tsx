@@ -11,7 +11,8 @@ import { PdfFieldOverlay } from "./PdfFieldOverlay";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const PdfViewer = () => {
-    const { fields, focusedFieldId } = useFieldContext().state;
+    const { state, dispatch } = useFieldContext();
+    const { fields, focusedFieldId } = state;
     const containerRef = useRef<HTMLDivElement>(null);
     const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
     const scale = useResponsivePdfScale(pageSize, containerRef);
@@ -19,7 +20,8 @@ const PdfViewer = () => {
     const onPageLoad = useCallback((page: PDFPageProxy) => {
         const viewport = page.getViewport({ scale: 1 });
         setPageSize({ width: viewport.width, height: viewport.height });
-    }, []);
+        dispatch({ type: "PDF_STATUS", payload: 'success' })
+    }, [dispatch]);
 
     // Memoize pixel calculations for all fields
     const pixelizedFields = useMemo(() =>
@@ -34,7 +36,11 @@ const PdfViewer = () => {
             className="relative w-full max-w-full"
             style={{ minHeight: "60vh", maxHeight: "90vh" }}
         >
-            <Document file={pdfForm} className="w-full h-full">
+            <Document
+                file={pdfForm}
+                className="w-full h-full"
+                onLoadError={() => dispatch({ type: "PDF_STATUS", payload: "error" })}
+            >
                 <Page
                     pageNumber={1}
                     scale={scale}

@@ -28,3 +28,39 @@ export const pulseVariants = {
         },
     },
 };
+
+export const getConfidenceColor = (score?: number) => {
+    if (!score) {
+        // default highlight
+        return {
+            border: "1px solid rgba(0, 123, 255, 1)",
+            background: "rgba(0, 123, 255, 0.6)",
+            boxShadow: "0 0 6px rgba(0,123,255,0.8)"
+
+        };
+    } else {
+        if (score > 0.9) {
+            // highlight for good score
+            return {
+                border: "1px solid rgba(0, 128, 0, 1)",
+                background: "rgba(0, 128, 0, 0.6)",
+                boxShadow: "0 0 15px rgba(34,197,94,0.8)"
+            };
+        } else if (score >= 0.7) {
+            // warning highlight for medium score
+            return {
+                border: "1px solid rgba(255, 193, 7, 1)",
+                background: "rgba(255, 193, 7, 0.6)",
+                boxShadow: "0 0 6px rgba(255,193,7,0.8)"
+            };
+        } else {
+            // highlight for worse score
+            return {
+                border: "1px solid rgba(220, 53, 69, 1)",
+                background: "rgba(220, 53, 69, 0.6)",
+                boxShadow: "0 0 6px rgba(220,53,69,0.8)"
+
+            }
+        };
+    }
+};

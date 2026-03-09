@@ -6,6 +6,8 @@ export const mockFormData: FormField[] = [
         label: "CIF ID",
         type: "number",
         value: "321502150",
+        score: 0.72915906,
+        readOnly: true,
         boundingBox: { x: 0.12135634, y: 0.21984027, width: 0.36, height: 0.02 },
     },
     {
@@ -13,6 +15,7 @@ export const mockFormData: FormField[] = [
         label: "Post Office",
         type: "text",
         value: "Delhi GPO",
+        score: 0.7629321,
         boundingBox: { x: 0.12135634, y: 0.195, width: 0.34, height: 0.02 },
     },
     {
@@ -20,6 +23,7 @@ export const mockFormData: FormField[] = [
         label: "First Name",
         type: "text",
         value: "RJKultheep",
+        score: 0.77054626,
         boundingBox: { x: 0.12135634, y: 0.28541404, width: 0.50, height: 0.02 },
     },
     {
@@ -34,6 +38,8 @@ export const mockFormData: FormField[] = [
         label: "Primary Account ID",
         type: "number",
         value: "4458312548",
+        score: 0.8054924,
+        readOnly: true,
         boundingBox: { x: 0.48157007, y: 0.219, width: 0.42, height: 0.02 },
     },
     {
@@ -41,6 +47,7 @@ export const mockFormData: FormField[] = [
         label: "Mobile Number",
         type: "number",
         value: "6378951260",
+        score: 0.6192695,
         boundingBox: { x: 0.12135634, y: 0.4384195, width: 0.42, height: 0.015 },
     },
     {
@@ -48,6 +55,7 @@ export const mockFormData: FormField[] = [
         label: "PAN Number",
         type: "text",
         value: "FTF8512GM",
+        score: 0.7880419,
         boundingBox: { x: 0.5085068, y: 0.4384195, width: 0.42, height: 0.015 },
     },
     {
@@ -55,6 +63,7 @@ export const mockFormData: FormField[] = [
         label: "Email ID",
         type: "text",
         value: "kultheepri@gmail.com",
+        score: 0.665432,
         boundingBox: { x: 0.12135634, y: 0.45901638, width: 0.60, height: 0.015 },
     },
     {
@@ -62,6 +71,7 @@ export const mockFormData: FormField[] = [
         label: "Date of Birth",
         type: "date",
         value: "06/03/1976",
+        score: 0.86684203,
         boundingBox: { x: 0.12135634, y: 0.48, width: 0.42, height: 0.015 },
     },
     {
@@ -69,6 +79,7 @@ export const mockFormData: FormField[] = [
         label: "Mother's Maiden Name",
         type: "text",
         value: "Rejina",
+        score: 0.8168526,
         boundingBox: { x: 0.50157007, y: 0.48, width: 0.42, height: 0.015 },
     },
     {
@@ -76,6 +87,7 @@ export const mockFormData: FormField[] = [
         label: "Internet Banking",
         type: "checkbox",
         value: true,
+        score: 0.95,
         boundingBox: { x: 0.121, y: 0.776839, width: 0.80, height: 0.03 },
     },
     {
